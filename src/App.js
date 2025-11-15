@@ -8,11 +8,11 @@ import Dashboard from './components/Dashboard';
 function App() {
   const [games, setGames] = useState([]);
 
-  // Se ejecuta una vez para cargar los juegos iniciales
+
   useEffect(() => {
     const fetchGames = async () => {
       try {
-        const response = await axios.get('http://localhost:4000/api/games');
+        const response = await axios.get('https://gametracker-backend-zrnt.onrender.com');
         setGames(response.data);
       } catch (error) {
         console.error("Error al obtener los juegos:", error);
@@ -21,16 +21,16 @@ function App() {
     fetchGames();
   }, []);
 
-  // Función para AÑADIR un juego (viene del formulario)
+
   const handleGameAdded = (newGame) => {
     setGames([newGame, ...games]);
   };
 
-  // Función para ACTUALIZAR un juego (completado/no completado)
+
   const handleToggleComplete = async (game) => {
     try {
       const response = await axios.put(
-        `http://localhost:4000/api/games/${game._id}`,
+        `https://gametracker-backend-zrnt.onrender.com/${game._id}`,
         { completed: !game.completed }
       );
 
@@ -45,18 +45,18 @@ function App() {
   // Función para ELIMINAR un juego
   const handleDeleteGame = async (id) => {
     try {
-      await axios.delete(`http://localhost:4000/api/games/${id}`);
+      await axios.delete(`https://gametracker-backend-zrnt.onrender.com/${id}`);
       setGames(games.filter(game => game._id !== id));
     } catch (error) {
       console.error("Error al eliminar el juego:", error);
     }
   };
 
-  // Función para CAMBIAR PUNTUACIÓN (rating)
+  // Función para CAMBIAR PUNTUACIÓN 
   const handleRatingChange = async (game, newRating) => {
     try {
       const response = await axios.put(
-        `http://localhost:4000/api/games/${game._id}`,
+        `https://gametracker-backend-zrnt.onrender.com/${game._id}`,
         { rating: newRating }
       );
       
@@ -68,7 +68,7 @@ function App() {
     }
   };
 
-  // 3. Renderizamos (dibujamos) la página
+  // 3. Renderizamos 
   return (
     <div className="App">
       <h1>Mi Biblioteca de Juegos </h1>
@@ -79,7 +79,6 @@ function App() {
       
       <div className="game-list">
 
-        {/* --- Este es el ÚNICO bucle .map que debe haber --- */}
         {games.map(game => (
           
           <div key={game._id} className="game-card">
@@ -87,10 +86,8 @@ function App() {
             <img src={game.cover} alt={game.title} className="game-cover" />
             <h2>{game.title}</h2>
             
-            {/* --- Horas Jugadas --- */}
             <p className="game-hours">{game.hoursPlayed} horas jugadas</p>
 
-            {/* --- Puntuación (Estrellas) --- */}
             <div className="rating-container">
               <Rating
                 onClick={(rate) => handleRatingChange(game, rate)}
@@ -99,16 +96,14 @@ function App() {
                 readonly={false}
               />
             </div>
-            
-            {/* --- Botón Completado --- */}
+   
             <button 
               onClick={() => handleToggleComplete(game)}
               className="complete-btn"
             >
               {game.completed ? 'Completado' : 'Marcar como Completado'}
             </button>
-            
-            {/* --- Botón Eliminar --- */}
+
             <button 
               onClick={() => handleDeleteGame(game._id)}
               className="delete-btn"
@@ -116,12 +111,12 @@ function App() {
               Eliminar
             </button>
             
-            {/* --- Sección de Reseñas --- */}
+
             <ReviewSection gameId={game._id} />
             
           </div>
         ))}
-        {/* --- Aquí termina el bucle .map --- */}
+ 
 
       </div>
     </div>
