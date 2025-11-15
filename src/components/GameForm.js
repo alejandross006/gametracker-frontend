@@ -1,74 +1,89 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
+import { Rating } from 'react-simple-star-rating';
+const API_URL = 'https://gametracker-backend-zrnt.onrender.com/api';
 
-// La URL base de tu API (Render)
-const API_BASE_URL = 'https://gametracker-backend-zrnt.onrender.com/api/reviews';
+function GameForm({ onGameAdded }) {
+  const [title, setTitle] = useState('');
+  const [cover, setCover] = useState('');
+  const [rating, setRating] = useState(5);
+  const [hoursPlayed, setHoursPlayed] = useState(0);
 
-function ReviewSection({ gameId }) {
-  const [reviews, setReviews] = useState([]);
-  const [comment, setComment] = useState('');
+  const handleRating = (rate) => {
+    setRating(rate);
+  };
 
-  // 1. Cargar las reseñas cuando el componente se monta
-  useEffect(() => {
-    const fetchReviews = async () => {
-      try {
-        // Usamos la URL de Render
-        const res = await axios.get(`${API_BASE_URL}/${gameId}`);
-        setReviews(res.data);
-      } catch (error) {
-        console.error("Error al cargar reseñas:", error);
-      }
-    };
-    fetchReviews();
-  }, [gameId]);
-
-  // 2. Manejar el envío del formulario
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!comment) return;
+
+    const newGame = {
+      title: title,
+      cover: cover,
+      rating: rating,
+      hoursPlayed: parseInt(hoursPlayed) || 0,
+    };
 
     try {
-      // Hacemos el POST a la URL de Render
-      const res = await axios.post(`${API_BASE_URL}/${gameId}`, { comment });
+      const response = await axios.post(API_URL, newGame);
       
-      // Añadimos la nueva reseña a la lista
-      setReviews([res.data, ...reviews]);
-      setComment(''); // Limpiamos el campo
+      onGameAdded(response.data);
+
+      setTitle('');
+      setCover('');
+      setRating(5);
+      setHoursPlayed(0);
+
     } catch (error) {
-      console.error("Error al añadir reseña:", error);
+      console.error("Error adding game:", error);
     }
   };
 
-  // 3. Renderizar (dibujar)
   return (
-    <div className="review-section">
-      <h4>Reseñas</h4>
+    <form onSubmit={handleSubmit} className="game-form">
+      <h3>Añadir Nuevo Juego</h3>
       
-      {/* Formulario para añadir reseña */}
-      <form onSubmit={handleSubmit} className="review-form">
-        <textarea
-          value={comment}
-          onChange={(e) => setComment(e.target.value)}
-          placeholder="Escribe tu reseña..."
-          rows="3"
-        ></textarea>
-        <button type="submit">Publicar Reseña</button>
-      </form>
-
-      {/* Lista de reseñas */}
-      <div className="review-list">
-        {reviews.length > 0 ? (
-          reviews.map(review => (
-            <div key={review._id} className="review-item">
-              <p>{review.comment}</p>
-            </div>
-          ))
-        ) : (
-          <p>No hay reseñas para este juego todavía.</p>
-        )}
+      <div>
+        <label>Título:</label>
+        <input
+          type="text"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          required
+        />
       </div>
-    </div>
+
+      <div>
+        <label>URL de la Portada:</label>
+        <input
+          type="text"
+          value={cover}
+          onChange={(e) => setCover(e.target.value)}
+          required
+        />
+      </div>
+
+      <div>
+        <label>Horas Jugadas:</label>
+        <input
+          type="number"
+          value={hoursPlayed}
+          onChange={(e) => setHoursPlayed(e.target.value)}
+          min="0"
+        />
+      </div>
+
+      <div>
+        <label>Puntuación:</label>
+        <Rating
+          onClick={handleRating}
+          initialValue={rating}
+          size={25}
+        />
+      </div>
+
+      <button type="submit">Añadir Juego</button>
+    </form>
   );
 }
 
-export default ReviewSection;
+export default GameForm;

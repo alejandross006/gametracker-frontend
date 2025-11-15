@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
-// La URL base de tu API (Render)
-const API_BASE_URL = 'https://gametracker-backend-zrnt.onrender.com/api/reviews';
-
-function ReviewSection({ gameId }) {
+// El componente ahora recibe la URL base
+function ReviewSection({ gameId, API_BASE_URL }) {
   const [reviews, setReviews] = useState([]);
   const [comment, setComment] = useState('');
 
@@ -12,30 +10,29 @@ function ReviewSection({ gameId }) {
   useEffect(() => {
     const fetchReviews = async () => {
       try {
-        // CORREGIDO: Usamos la URL de Render
-        const res = await axios.get(`${API_BASE_URL}/${gameId}`);
+        // Usamos la URL base + el endpoint /reviews
+        const res = await axios.get(`${API_BASE_URL}/reviews/${gameId}`);
         setReviews(res.data);
       } catch (error) {
-        console.error("Error al cargar reseñas:", error);
+        console.error("Error fetching reviews:", error);
       }
     };
     fetchReviews();
-  }, [gameId]); // Se ejecuta cada vez que el gameId cambie
+  }, [gameId, API_BASE_URL]);
 
   // 2. Manejar el envío del formulario
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!comment) return; // No enviar reseñas vacías
+    if (!comment) return;
 
     try {
-      // CORREGIDO: Hacemos el POST a la URL de Render
-      const res = await axios.post(`${API_BASE_URL}/${gameId}`, { comment });
+      // Hacemos el POST a la URL de Render
+      const res = await axios.post(`${API_BASE_URL}/reviews/${gameId}`, { comment });
       
-      // Añadimos la nueva reseña a la lista (la más nueva primero)
       setReviews([res.data, ...reviews]);
-      setComment(''); // Limpiamos el campo
+      setComment('');
     } catch (error) {
-      console.error("Error al añadir reseña:", error);
+      console.error("Error adding review:", error);
     }
   };
 
@@ -44,7 +41,6 @@ function ReviewSection({ gameId }) {
     <div className="review-section">
       <h4>Reseñas</h4>
       
-      {/* Formulario para añadir reseña */}
       <form onSubmit={handleSubmit} className="review-form">
         <textarea
           value={comment}
@@ -55,7 +51,6 @@ function ReviewSection({ gameId }) {
         <button type="submit">Publicar Reseña</button>
       </form>
 
-      {/* Lista de reseñas */}
       <div className="review-list">
         {reviews.length > 0 ? (
           reviews.map(review => (

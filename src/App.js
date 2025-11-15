@@ -9,33 +9,29 @@ import Dashboard from './components/Dashboard';
 function App() {
   const [games, setGames] = useState([]);
 
-  // URL de la API de Render
-  const API_URL = 'https://gametracker-backend-zrnt.onrender.com/api/games';
+  // Render API URL
+  const API_URL = 'https://gametracker-backend-zrnt.onrender.com/api';
 
-  // Se ejecuta una vez para cargar los juegos iniciales
   useEffect(() => {
     const fetchGames = async () => {
       try {
-        
-        const response = await axios.get(API_URL);
+        const response = await axios.get(`${API_URL}/games`);
         setGames(response.data);
       } catch (error) {
-        console.error("Error al obtener los juegos:", error);
+        console.error("Error fetching games:", error);
       }
     };
     fetchGames();
   }, []);
 
-  // Función para AÑADIR un juego (viene del formulario)
   const handleGameAdded = (newGame) => {
     setGames([newGame, ...games]);
   };
 
-  // Función para ACTUALIZAR un juego (completado/no completado)
   const handleToggleComplete = async (game) => {
     try {
       const response = await axios.put(
-        `${API_URL}/${game._id}`, 
+        `${API_URL}/games/${game._id}`,
         { completed: !game.completed }
       );
 
@@ -43,25 +39,23 @@ function App() {
         g._id === game._id ? response.data : g 
       ));
     } catch (error) {
-      console.error("Error al actualizar el juego:", error);
+      console.error("Error updating game status:", error);
     }
   };
 
-  // Función para ELIMINAR un juego
   const handleDeleteGame = async (id) => {
     try {
-      await axios.delete(`${API_URL}/${id}`); 
+      await axios.delete(`${API_URL}/games/${id}`);
       setGames(games.filter(game => game._id !== id));
     } catch (error) {
-      console.error("Error al eliminar el juego:", error);
+      console.error("Error deleting game:", error);
     }
   };
 
-  // Función para CAMBIAR PUNTUACIÓN (rating)
   const handleRatingChange = async (game, newRating) => {
     try {
       const response = await axios.put(
-        `${API_URL}/${game._id}`, 
+        `${API_URL}/games/${game._id}`,
         { rating: newRating }
       );
       
@@ -69,26 +63,21 @@ function App() {
         g._id === game._id ? response.data : g 
       ));
     } catch (error) {
-      console.error("Error al actualizar la puntuación:", error);
+      console.error("Error updating rating:", error);
     }
   };
 
-  // 3. Renderizamos (dibujamos) la página
   return (
     <div className="App">
       <h1>Mi Biblioteca de Juegos</h1>
       
-      {/* Dashboard (Estadísticas) */}
       <Dashboard games={games} />
- 
-      {/* Formulario */}
-      <GameForm onGameAdded={handleGameAdded} />
+      
+      <GameForm onGameAdded={handleGameAdded} /> 
       
       <div className="game-list">
 
-        {/* --- Este es el ÚNICO bucle .map que debe haber --- */}
-        {/* CORREGIDO: Faltaban los paréntesis en games.map */}
-        {games.map(game => ( 
+        {games.map(game => (
           
           <div key={game._id} className="game-card">
             
@@ -120,7 +109,7 @@ function App() {
               Eliminar
             </button>
             
-            <ReviewSection gameId={game._id} />
+            <ReviewSection gameId={game._id} API_URL={API_URL} />
             
           </div>
         ))}
