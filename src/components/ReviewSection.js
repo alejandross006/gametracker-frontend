@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
-// Recibimos el ID del juego (gameId) desde App.js
 function ReviewSection({ gameId }) {
   const [reviews, setReviews] = useState([]);
-  const [comment, setComment] = useState(''); // Estado para el formulario
+  const [comment, setComment] = useState(''); 
 
   // 1. Cargar las reseñas cuando el componente se monta
   useEffect(() => {
@@ -22,12 +21,10 @@ function ReviewSection({ gameId }) {
   // 2. Manejar el envío del formulario
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!comment) return; // No enviar reseñas vacías
-
+    if (!comment) return; 
     try {
       const res = await axios.post(`http://localhost:4000/api/reviews/${gameId}`, { comment });
-      
-      // Añadimos la nueva reseña a la lista (la más nueva primero)
+
       setReviews([res.data, ...reviews]);
       setComment(''); // Limpiamos el campo
     } catch (error) {
@@ -40,7 +37,6 @@ function ReviewSection({ gameId }) {
     <div className="review-section">
       <h4>Reseñas</h4>
       
-      {/* Formulario para añadir reseña */}
       <form onSubmit={handleSubmit} className="review-form">
         <textarea
           value={comment}
@@ -51,7 +47,6 @@ function ReviewSection({ gameId }) {
         <button type="submit">Publicar Reseña</button>
       </form>
 
-      {/* Lista de reseñas */}
       <div className="review-list">
         {reviews.length > 0 ? (
           reviews.map(review => (
