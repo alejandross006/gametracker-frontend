@@ -1,43 +1,50 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
+// La URL base de tu API (Render)
+const API_BASE_URL = 'https://gametracker-backend-zrnt.onrender.com/api/reviews';
+
 function ReviewSection({ gameId }) {
   const [reviews, setReviews] = useState([]);
-  const [comment, setComment] = useState(''); 
+  const [comment, setComment] = useState('');
 
+  // 1. Cargar las reseñas cuando el componente se monta
   useEffect(() => {
     const fetchReviews = async () => {
       try {
-        const res = await axios.get(`https://gametracker-backend-zrnt.onrender.com/${gameId}`);
+        // CORREGIDO: Usamos la URL de Render
+        const res = await axios.get(`${API_BASE_URL}/${gameId}`);
         setReviews(res.data);
       } catch (error) {
         console.error("Error al cargar reseñas:", error);
       }
     };
     fetchReviews();
-  }, [gameId]); 
+  }, [gameId]); // Se ejecuta cada vez que el gameId cambie
 
   // 2. Manejar el envío del formulario
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!comment) return; 
+    if (!comment) return; // No enviar reseñas vacías
 
     try {
-      const res = await axios.post(`https://gametracker-backend-zrnt.onrender.com/${gameId}`, { comment });
+      // CORREGIDO: Hacemos el POST a la URL de Render
+      const res = await axios.post(`${API_BASE_URL}/${gameId}`, { comment });
       
-      
+      // Añadimos la nueva reseña a la lista (la más nueva primero)
       setReviews([res.data, ...reviews]);
-      setComment(''); 
+      setComment(''); // Limpiamos el campo
     } catch (error) {
       console.error("Error al añadir reseña:", error);
     }
   };
 
-  // 3. Renderizar 
+  // 3. Renderizar (dibujar)
   return (
     <div className="review-section">
       <h4>Reseñas</h4>
       
+      {/* Formulario para añadir reseña */}
       <form onSubmit={handleSubmit} className="review-form">
         <textarea
           value={comment}
@@ -48,6 +55,7 @@ function ReviewSection({ gameId }) {
         <button type="submit">Publicar Reseña</button>
       </form>
 
+      {/* Lista de reseñas */}
       <div className="review-list">
         {reviews.length > 0 ? (
           reviews.map(review => (
