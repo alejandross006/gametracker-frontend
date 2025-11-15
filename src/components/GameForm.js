@@ -2,22 +2,19 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { Rating } from 'react-simple-star-rating';
 
-// Este componente recibe una función 'onGameAdded' desde App.js
 function GameForm({ onGameAdded }) {
   // Creamos un estado para cada campo del formulario
   const [title, setTitle] = useState('');
   const [cover, setCover] = useState('');
 const [rating, setRating] = useState(1);
 const [hoursPlayed, setHoursPlayed] = useState(0);
-  // Esta función se ejecuta cuando el usuario envía el formulario
 
   const handleRating = (rate) => {
   setRating(rate);
 };
   const handleSubmit = async (e) => {
-    e.preventDefault(); // Evita que la página se recargue
+    e.preventDefault();
 
-    // Creamos el objeto del nuevo juego
     const newGame = {
       title: title,
       cover: cover,
@@ -26,11 +23,8 @@ const [hoursPlayed, setHoursPlayed] = useState(0);
     };
 
     try {
-      // Hacemos un POST a nuestra API del backend
       const response = await axios.post('http://localhost:4000/api/games', newGame);
-      
-      // Si todo sale bien, llamamos a la función que nos pasó App.js
-      // para añadir el nuevo juego (response.data) a la lista
+
       onGameAdded(response.data);
 
       // Limpiamos el formulario
