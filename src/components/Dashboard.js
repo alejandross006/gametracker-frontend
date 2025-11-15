@@ -1,9 +1,7 @@
 import React from 'react';
 
-// Recibimos la lista de juegos como "props"
 function Dashboard({ games }) {
 
-  // --- Cálculos ---
 
   // 1. Total de Juegos
   const totalGames = games.length;
@@ -12,12 +10,10 @@ function Dashboard({ games }) {
   const completedGames = games.filter(game => game.completed).length;
 
   // 3. Total de Horas Jugadas
-  // reduce() suma todos los valores de un array
   const totalHours = games.reduce((acc, game) => acc + game.hoursPlayed, 0);
 
   // 4. Puntuación Promedio
   const totalRating = games.reduce((acc, game) => acc + game.rating, 0);
-  // Evitamos dividir por cero si no hay juegos. toFixed(1) es para 1 decimal.
   const averageRating = totalGames > 0 ? (totalRating / totalGames).toFixed(1) : 0;
 
 
