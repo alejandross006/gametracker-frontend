@@ -21,7 +21,6 @@ function App() {
     fetchGames();
   }, []);
 
-  // Función para AÑADIR un juego (viene del formulario)
   const handleGameAdded = (newGame) => {
     setGames([newGame, ...games]);
   };
@@ -52,7 +51,6 @@ function App() {
     }
   };
 
-  // Función para CAMBIAR PUNTUACIÓN (rating)
   const handleRatingChange = async (game, newRating) => {
     try {
       const response = await axios.put(
@@ -68,7 +66,7 @@ function App() {
     }
   };
 
-  // 3. Renderizamos (dibujamos) la página
+  // 3. Renderizamos 
   return (
     <div className="App">
       <h1>Mi Biblioteca de Juegos </h1>
@@ -100,7 +98,6 @@ function App() {
               />
             </div>
             
-            {/* --- Botón Completado --- */}
             <button 
               onClick={() => handleToggleComplete(game)}
               className="complete-btn"
@@ -121,7 +118,6 @@ function App() {
             
           </div>
         ))}
-        {/* --- Aquí termina el bucle .map --- */}
 
       </div>
     </div>
